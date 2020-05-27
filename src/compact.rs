@@ -471,8 +471,11 @@ impl Decode for Compact<u8> {
 	}
 
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
-		Self::decode(input)?;
-		Ok(())
+		let prefix = input.read_byte()?;
+		match prefix % 4 {
+			0 => Ok(()),
+			_ => input.skip(1),
+		}
 	}
 }
 
@@ -502,8 +505,12 @@ impl Decode for Compact<u16> {
 	}
 
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
-		Self::decode(input)?;
-		Ok(())
+		let prefix = input.read_byte()?;
+		match prefix % 4 {
+			0 => Ok(()),
+			1 => input.skip(1),
+			_ => input.skip(3),
+		}
 	}
 }
 
@@ -546,8 +553,13 @@ impl Decode for Compact<u32> {
 	}
 
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
-		Self::decode(input)?;
-		Ok(())
+		let prefix = input.read_byte()?;
+		match prefix % 4 {
+			0 => Ok(()),
+			1 => input.skip(1),
+			2 => input.skip(3),
+			3|_ => input.skip(4),
+		}
 	}
 }
 
@@ -606,8 +618,13 @@ impl Decode for Compact<u64> {
 	}
 
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
-		Self::decode(input)?;
-		Ok(())
+		let prefix = input.read_byte()?;
+		match prefix % 4 {
+			0 => Ok(()),
+			1 => input.skip(1),
+			2 => input.skip(3),
+			3|_ => input.skip(((prefix >> 2) + 4) as usize),
+		}
 	}
 }
 
@@ -674,8 +691,13 @@ impl Decode for Compact<u128> {
 	}
 
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
-		Self::decode(input)?;
-		Ok(())
+		let prefix = input.read_byte()?;
+		match prefix % 4 {
+			0 => Ok(()),
+			1 => input.skip(1),
+			2 => input.skip(3),
+			3|_ => input.skip(((prefix >> 2) + 4) as usize),
+		}
 	}
 }
 
