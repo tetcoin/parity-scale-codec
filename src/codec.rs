@@ -348,6 +348,11 @@ pub trait Decode: Sized {
 	#[doc(hidden)]
 	const TYPE_INFO: TypeInfo = TypeInfo::Unknown;
 
+	/// Optionally give the size of the encoded value if fixed.
+	///
+	/// This method is used to skip efficiently.
+	fn exact_size() -> Option<u32>;
+
 	/// Attempt to deserialise the value from input.
 	fn decode<I: Input>(value: &mut I) -> Result<Self, Error>;
 
@@ -462,6 +467,10 @@ impl<T, X> Decode for X where
 	T: Decode + Into<X>,
 	X: WrapperTypeDecode<Wrapped=T>,
 {
+	fn exact_size() -> Option<u32> {
+		T::exact_size()
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		Ok(T::decode(input)?.into())
 	}
@@ -532,6 +541,10 @@ where
 {}
 
 impl<T: Decode, E: Decode> Decode for Result<T, E> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		match input.read_byte()? {
 			0 => Ok(Ok(T::decode(input)?)),
@@ -576,6 +589,10 @@ impl Encode for OptionBool {
 impl EncodeLike for OptionBool {}
 
 impl Decode for OptionBool {
+	fn exact_size() -> Option<u32> {
+		Some(1)
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		match input.read_byte()? {
 			0 => Ok(OptionBool(None)),
@@ -612,6 +629,10 @@ impl<T: Encode> Encode for Option<T> {
 }
 
 impl<T: Decode> Decode for Option<T> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		match input.read_byte()? {
 			0 => Ok(None),
@@ -651,6 +672,10 @@ macro_rules! impl_for_non_zero {
 			}
 
 			impl Decode for $name {
+				fn exact_size() -> Option<u32> {
+					<$from>::exact_size()
+				}
+
 				fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 					Self::new(<$from as Decode>::decode(input)?)
 						.ok_or_else(|| Error::from("cannot create non-zero number from 0"))
@@ -715,6 +740,10 @@ macro_rules! impl_array {
 			}
 
 			impl<T: Decode> Decode for [T; $n] {
+				fn exact_size() -> Option<u32> {
+					T::exact_size().map(|s| s * $n)
+				}
+
 				fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 					let mut r = ArrayVec::new();
 					for _ in 0..$n {
@@ -793,6 +822,10 @@ impl Encode for str {
 impl<'a, T: ToOwned + ?Sized> Decode for Cow<'a, T>
 	where <T as ToOwned>::Owned: Decode,
 {
+	fn exact_size() -> Option<u32> {
+		<T as ToOwned>::Owned::exact_size()
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		Ok(Cow::Owned(Decode::decode(input)?))
 	}
@@ -809,6 +842,10 @@ impl<T> Encode for PhantomData<T> {
 }
 
 impl<T> Decode for PhantomData<T> {
+	fn exact_size() -> Option<u32> {
+		Some(0)
+	}
+
 	fn decode<I: Input>(_input: &mut I) -> Result<Self, Error> {
 		Ok(PhantomData)
 	}
@@ -820,6 +857,10 @@ impl<T> Decode for PhantomData<T> {
 
 #[cfg(any(feature = "std", feature = "full"))]
 impl Decode for String {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		Self::from_utf8(Vec::decode(input)?).map_err(|_| "Invalid utf8 sequence".into())
 	}
@@ -916,6 +957,10 @@ impl<T: EncodeLike<U>, U: Encode> EncodeLike<&[U]> for Vec<T> {}
 impl<T: EncodeLike<U>, U: Encode> EncodeLike<Vec<U>> for &[T] {}
 
 impl<T: Decode> Decode for Vec<T> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		<Compact<u32>>::decode(input).and_then(move |Compact(len)| {
 			let len = len as usize;
@@ -958,31 +1003,16 @@ impl<T: Decode> Decode for Vec<T> {
 
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
 		<Compact<u32>>::decode(input).and_then(move |Compact(len)| {
-			let len = len as usize;
-
-			macro_rules! skip {
-				( $ty:ty, $input:ident, $len:ident ) => {{
-					match $len.checked_mul(mem::size_of::<$ty>()) {
-						Some(size) => input.skip(size)?,
-						// NOTE: this can be optimized by skipping chunks.
-						None => for _ in 0..len {
-							T::skip(input)?;
-						},
-					}
-					Ok(())
-				}};
+			// TODO TODO: this checked_mul make behavior different depending on if usize=u32 or usize=u64
+			if let Some(size) = T::exact_size().and_then(|s| s.checked_mul(len)) {
+				return input.skip(size as usize)
 			}
 
-			with_type_info! {
-				<T as Decode>::TYPE_INFO,
-				skip(input, len),
-				{
-					for _ in 0..len {
-						T::skip(input)?;
-					}
-					Ok(())
-				},
+			for _ in 0..len {
+				T::skip(input)?;
 			}
+
+			Ok(())
 		})
 	}
 }
@@ -1012,6 +1042,10 @@ macro_rules! impl_codec_through_iterator {
 		impl<$( $generics: Decode $( + $decode_additional )? ),*> Decode
 			for $type<$( $generics, )*>
 		{
+			fn exact_size() -> Option<u32> {
+				None
+			}
+
 			fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 				<Compact<u32>>::decode(input).and_then(move |Compact(len)| {
 					Result::from_iter((0..len).map(|_| Decode::decode(input)))
@@ -1079,6 +1113,10 @@ impl<T: Encode> Encode for VecDeque<T> {
 }
 
 impl<T: Decode> Decode for VecDeque<T> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		Ok(<Vec<T>>::decode(input)?.into())
 	}
@@ -1104,6 +1142,10 @@ impl Encode for () {
 }
 
 impl Decode for () {
+	fn exact_size() -> Option<u32> {
+		Some(0)
+	}
+
 	fn decode<I: Input>(_: &mut I) -> Result<(), Error> {
 		Ok(())
 	}
@@ -1150,6 +1192,10 @@ macro_rules! tuple_impl {
 		}
 
 		impl<$one: Decode> Decode for ($one,) {
+			fn exact_size() -> Option<u32> {
+				$one::exact_size()
+			}
+
 			fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 				match $one::decode(input) {
 					Err(e) => Err(e),
@@ -1187,6 +1233,20 @@ macro_rules! tuple_impl {
 		}
 
 		impl<$first: Decode, $($rest: Decode),+> Decode for ($first, $($rest),+) {
+			fn exact_size() -> Option<u32> {
+				let mut total_size = 0;
+				match $first::exact_size() {
+					Some(s) => total_size += s,
+					None => return None,
+				}
+				$(match $rest::exact_size() {
+					Some(s) => total_size += s,
+					None => return None,
+				})+
+
+				Some(total_size)
+			}
+
 			fn decode<INPUT: Input>(input: &mut INPUT) -> Result<Self, super::Error> {
 				Ok((
 					match $first::decode(input) {
@@ -1245,6 +1305,10 @@ macro_rules! impl_endians {
 		impl Decode for $t {
 			const TYPE_INFO: TypeInfo = TypeInfo::$ty_info;
 
+			fn exact_size() -> Option<u32> {
+				Some(mem::size_of::<$t>() as u32)
+			}
+
 			fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 				let mut buf = [0u8; mem::size_of::<$t>()];
 				input.read(&mut buf)?;
@@ -1276,6 +1340,10 @@ macro_rules! impl_one_byte {
 		impl Decode for $t {
 			const TYPE_INFO: TypeInfo = TypeInfo::$ty_info;
 
+			fn exact_size() -> Option<u32> {
+				Some(1)
+			}
+
 			fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 				Ok(input.read_byte()? as $t)
 			}
@@ -1303,6 +1371,10 @@ impl Encode for bool {
 }
 
 impl Decode for bool {
+	fn exact_size() -> Option<u32> {
+		Some(1)
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let byte = input.read_byte()?;
 		match byte {
@@ -1330,6 +1402,10 @@ impl Encode for Duration {
 }
 
 impl Decode for Duration {
+	fn exact_size() -> Option<u32> {
+		Some((mem::size_of::<u64>() + mem::size_of::<u32>()) as u32)
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let (secs, nanos) = <(u64, u32)>::decode(input)?;
 		if nanos >= A_BILLION {

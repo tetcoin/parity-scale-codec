@@ -81,6 +81,10 @@ mod tests {
 	}
 
 	impl Decode for TestStruct {
+		fn exact_size() -> Option<u32> {
+			None
+		}
+
 		fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 			Ok(
 				Self {

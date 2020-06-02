@@ -57,6 +57,10 @@ impl<O: BitOrder, T: BitStore + ToByteSlice> Encode for BitVec<O, T> {
 impl<O: BitOrder, T: BitStore + ToByteSlice> EncodeLike for BitVec<O, T> {}
 
 impl<O: BitOrder, T: BitStore + FromByteSlice> Decode for BitVec<O, T> {
+	fn exact_size() -> Option<usize> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		<Compact<u32>>::decode(input).and_then(move |Compact(bits)| {
 			let bits = bits as usize;
@@ -87,6 +91,10 @@ impl<O: BitOrder, T: BitStore + ToByteSlice> Encode for BitBox<O, T> {
 impl<O: BitOrder, T: BitStore + ToByteSlice> EncodeLike for BitBox<O, T> {}
 
 impl<O: BitOrder, T: BitStore + FromByteSlice> Decode for BitBox<O, T> {
+	fn exact_size() -> Option<usize> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		Ok(Self::from_bitslice(BitVec::<O, T>::decode(input)?.as_bitslice()))
 	}

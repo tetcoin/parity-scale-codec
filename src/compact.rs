@@ -165,6 +165,10 @@ where
 	T: CompactAs,
 	Compact<T::As>: Decode,
 {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let as_ = Compact::<T::As>::decode(input)?;
 		Ok(Compact(<T as CompactAs>::decode_from(as_.0)?))
@@ -438,6 +442,10 @@ impl CompactLen<u128> for Compact<u128> {
 }
 
 impl Decode for Compact<()> {
+	fn exact_size() -> Option<u32> {
+		Some(0)
+	}
+
 	fn decode<I: Input>(_input: &mut I) -> Result<Self, Error> {
 		Ok(Compact(()))
 	}
@@ -454,6 +462,10 @@ const U64_OUT_OF_RANGE: &str = "out of range decoding Compact<u64>";
 const U128_OUT_OF_RANGE: &str = "out of range decoding Compact<u128>";
 
 impl Decode for Compact<u8> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let prefix = input.read_byte()?;
 		Ok(Compact(match prefix % 4 {
@@ -477,6 +489,10 @@ impl Decode for Compact<u8> {
 }
 
 impl Decode for Compact<u16> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let prefix = input.read_byte()?;
 		Ok(Compact(match prefix % 4 {
@@ -508,6 +524,10 @@ impl Decode for Compact<u16> {
 }
 
 impl Decode for Compact<u32> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let prefix = input.read_byte()?;
 		Ok(Compact(match prefix % 4 {
@@ -552,6 +572,10 @@ impl Decode for Compact<u32> {
 }
 
 impl Decode for Compact<u64> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let prefix = input.read_byte()?;
 		Ok(Compact(match prefix % 4 {
@@ -612,6 +636,10 @@ impl Decode for Compact<u64> {
 }
 
 impl Decode for Compact<u128> {
+	fn exact_size() -> Option<u32> {
+		None
+	}
+
 	fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 		let prefix = input.read_byte()?;
 		Ok(Compact(match prefix % 4 {

@@ -225,6 +225,8 @@ mod tests {
 		}
 
 		impl Decode for NoCopy {
+			fn exact_size() -> Option<u32> { None }
+
 			fn decode<I: Input>(input: &mut I) -> Result<Self, Error> {
 				u32::decode(input).map(|data| Self { data })
 			}
