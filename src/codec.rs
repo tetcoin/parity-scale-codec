@@ -543,8 +543,7 @@ impl<T: Decode, E: Decode> Decode for Result<T, E> {
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
 		match input.read_byte()? {
 			0 => T::skip(input),
-			1 => E::skip(input),
-			_ => Err("unexpected first byte skipping Result".into()),
+			_ => E::skip(input),
 		}
 	}
 }
@@ -623,8 +622,7 @@ impl<T: Decode> Decode for Option<T> {
 	fn skip<I: Input>(input: &mut I) -> Result<(), Error> {
 		match input.read_byte()? {
 			0 => Ok(()),
-			1 => T::skip(input),
-			_ => Err("unexpecded first byte skipping Option".into()),
+			_ => T::skip(input),
 		}
 	}
 }
