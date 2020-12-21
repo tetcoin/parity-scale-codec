@@ -155,28 +155,31 @@ mod tests {
 	use crate::{Input, Encode, EncodeLike};
 	use std::collections::VecDeque;
 
+	const TEST_VALUE: u32 = {
+		#[cfg(not(miri))]
+		{ 1_000_000 }
+		#[cfg(miri)]
+		{ 1_000 }
+	};
+
 	#[test]
 	fn vec_encode_append_works() {
-		let max_value = 1_000_000;
-
-		let encoded = (0..max_value).fold(Vec::new(), |encoded, v| {
+		let encoded = (0..TEST_VALUE).fold(Vec::new(), |encoded, v| {
 			<Vec<u32> as EncodeAppend>::append_or_new(encoded, std::iter::once(&v)).unwrap()
 		});
 
 		let decoded = Vec::<u32>::decode(&mut &encoded[..]).unwrap();
-		assert_eq!(decoded, (0..max_value).collect::<Vec<_>>());
+		assert_eq!(decoded, (0..TEST_VALUE).collect::<Vec<_>>());
 	}
 
 	#[test]
 	fn vec_encode_append_multiple_items_works() {
-		let max_value = 1_000_000u32;
-
-		let encoded = (0..max_value).fold(Vec::new(), |encoded, v| {
+		let encoded = (0..TEST_VALUE).fold(Vec::new(), |encoded, v| {
 			<Vec<u32> as EncodeAppend>::append_or_new(encoded, &[v, v, v, v]).unwrap()
 		});
 
 		let decoded = Vec::<u32>::decode(&mut &encoded[..]).unwrap();
-		let expected = (0..max_value).fold(Vec::new(), |mut vec, i| {
+		let expected = (0..TEST_VALUE).fold(Vec::new(), |mut vec, i| {
 			vec.append(&mut vec![i, i, i, i]);
 			vec
 		});
@@ -185,26 +188,22 @@ mod tests {
 
 	#[test]
 	fn vecdeque_encode_append_works() {
-		let max_value = 1_000_000;
-
-		let encoded = (0..max_value).fold(Vec::new(), |encoded, v| {
+		let encoded = (0..TEST_VALUE).fold(Vec::new(), |encoded, v| {
 			<VecDeque<u32> as EncodeAppend>::append_or_new(encoded, std::iter::once(&v)).unwrap()
 		});
 
 		let decoded = VecDeque::<u32>::decode(&mut &encoded[..]).unwrap();
-		assert_eq!(decoded, (0..max_value).collect::<Vec<_>>());
+		assert_eq!(decoded, (0..TEST_VALUE).collect::<Vec<_>>());
 	}
 
 	#[test]
 	fn vecdeque_encode_append_multiple_items_works() {
-		let max_value = 1_000_000u32;
-
-		let encoded = (0..max_value).fold(Vec::new(), |encoded, v| {
+		let encoded = (0..TEST_VALUE).fold(Vec::new(), |encoded, v| {
 			<VecDeque<u32> as EncodeAppend>::append_or_new(encoded, &[v, v, v, v]).unwrap()
 		});
 
 		let decoded = VecDeque::<u32>::decode(&mut &encoded[..]).unwrap();
-		let expected = (0..max_value).fold(Vec::new(), |mut vec, i| {
+		let expected = (0..TEST_VALUE).fold(Vec::new(), |mut vec, i| {
 			vec.append(&mut vec![i, i, i, i]);
 			vec
 		});
@@ -240,13 +239,11 @@ mod tests {
 
 	#[test]
 	fn vec_encode_like_append_works() {
-		let max_value = 1_000_000;
-
-		let encoded = (0..max_value).fold(Vec::new(), |encoded, v| {
+		let encoded = (0..TEST_VALUE).fold(Vec::new(), |encoded, v| {
 			<Vec<u32> as EncodeAppend>::append_or_new(encoded, std::iter::once(Box::new(v as u32))).unwrap()
 		});
 
 		let decoded = Vec::<u32>::decode(&mut &encoded[..]).unwrap();
-		assert_eq!(decoded, (0..max_value).collect::<Vec<_>>());
+		assert_eq!(decoded, (0..TEST_VALUE).collect::<Vec<_>>());
 	}
 }
