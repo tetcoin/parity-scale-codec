@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use bitvec::{vec::BitVec, order::Msb0, order::BitOrder, store::BitStore};
 use honggfuzz::fuzz;
-use parity_scale_codec::{Encode, Decode, Compact};
+use tetsy_scale_codec::{Encode, Decode, Compact};
 use honggfuzz::arbitrary::{Arbitrary, Unstructured, Result as ArbResult};
 
 #[derive(Encode, Decode, Clone, PartialEq, Debug, Arbitrary)]

@@ -1,6 +1,6 @@
 #[cfg(not(feature="derive"))]
-use parity_scale_codec_derive::Encode;
-use parity_scale_codec::Encode;
+use tetsy_scale_codec_derive::Encode;
+use tetsy_scale_codec::Encode;
 
 #[test]
 fn discriminant_variant_counted_in_default_index() {

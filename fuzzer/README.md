@@ -1,4 +1,4 @@
-# Parity SCALE Codec fuzzer
+# Tetsy SCALE Codec fuzzer
 
 ## Requirements:
 Install [honggfuzz-rs](https://github.com/rust-fuzz/honggfuzz-rs):

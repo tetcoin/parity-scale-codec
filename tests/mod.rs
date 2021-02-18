@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #[cfg(not(feature="derive"))]
-use parity_scale_codec_derive::{Encode, Decode};
-use parity_scale_codec::{
+use tetsy_scale_codec_derive::{Encode, Decode};
+use tetsy_scale_codec::{
 	Encode, Decode, HasCompact, Compact, EncodeAsRef, CompactAs, Error, Output,
 };
 use serde_derive::{Serialize, Deserialize};
