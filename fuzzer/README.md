@@ -8,7 +8,7 @@ cargo install honggfuzz
 
 Run the fuzzer:
 ```
-cargo hfuzz run codec-fuzzer
+cargo hfuzz run tetsy-codec-fuzzer
 ```
 
 
