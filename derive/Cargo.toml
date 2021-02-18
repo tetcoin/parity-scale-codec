@@ -16,4 +16,5 @@ proc-macro2 = "1.0.6"
 proc-macro-crate = "0.1.4"
 
 [dev-dependencies]
-tetsy-scale-codec = { path = "..", version = "2.0.0" }
+tetsy-scale-codec = { path = "../", version = "2.0.0" }
+
