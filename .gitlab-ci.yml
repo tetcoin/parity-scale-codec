@@ -6,7 +6,7 @@ stages:
   - build
 
 
-image:                             parity/rust:nightly
+image:                             tetcoin/rust:nightly
 
 variables:
   CI_SERVER_NAME:                  "GitLab CI"

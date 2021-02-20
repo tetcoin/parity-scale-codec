@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use parity_scale_codec::*;
-use parity_scale_codec_derive::{Encode, Decode};
+use tetsy_scale_codec::*;
+use tetsy_scale_codec_derive::{Encode, Decode};
 
 use criterion::{Criterion, black_box, Bencher, criterion_group, criterion_main};
 use bitvec::vec::BitVec;

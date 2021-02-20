@@ -1,7 +1,7 @@
-# Parity SCALE Codec
+# Tetsy SCALE Codec
 
 Rust implementation of the SCALE (Simple Concatenated Aggregate Little-Endian) data format
-for types used in the Parity Substrate framework.
+for types used in the Tetsy Tetcore framework.
 
 SCALE is a light-weight format which allows encoding (and decoding) which makes it highly
 suitable for resource-constrained execution environments like blockchain runtimes and low-power,
@@ -13,7 +13,7 @@ The encoded data does not include this contextual information.
 
 To get a better understanding of how the encoding is done for different types,
 take a look at the
-[low-level data formats overview page at the Substrate docs site](https://substrate.dev/docs/en/overview/low-level-data-format).
+[low-level data formats overview page at the Tetcore docs site](https://dev.tetcoin.org/docs/en/overview/low-level-data-format).
 
 ## Implementation
 
@@ -69,7 +69,7 @@ Following are some examples to demonstrate usage of the codec.
 
 ```rust
 
-use parity_scale_codec::{Encode, Decode};
+use tetsy_scale_codec::{Encode, Decode};
 
 #[derive(Debug, PartialEq, Encode, Decode)]
 enum EnumType {
@@ -116,7 +116,7 @@ assert_eq!(EnumType::decode(&mut dz).ok(), None);
 
 ```rust
 
-use parity_scale_codec::{Encode, Decode, Compact, HasCompact};
+use tetsy_scale_codec::{Encode, Decode, Compact, HasCompact};
 
 #[derive(Debug, PartialEq, Encode, Decode)]
 struct Test1CompactHasCompact<T: HasCompact> {
@@ -142,7 +142,7 @@ assert_eq!(<Test1CompactHasCompact<u64>>::decode(&mut &encoded[..]).unwrap().bar
 ```rust
 
 use serde_derive::{Serialize, Deserialize};
-use parity_scale_codec::{Encode, Decode, Compact, HasCompact, CompactAs};
+use tetsy_scale_codec::{Encode, Decode, Compact, HasCompact, CompactAs};
 
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug))]
 #[derive(PartialEq, Eq, Clone)]

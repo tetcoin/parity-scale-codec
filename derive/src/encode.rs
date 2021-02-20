@@ -52,8 +52,8 @@ fn encode_single_field(
 		let field_type = &field.ty;
 		quote_spanned! {
 			field.span() => {
-				<<#field_type as _parity_scale_codec::HasCompact>::Type as
-					_parity_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field_name)
+				<<#field_type as _tetsy_scale_codec::HasCompact>::Type as
+					_tetsy_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field_name)
 			}
 		}
 	} else if let Some(encoded_as) = encoded_as {
@@ -61,7 +61,7 @@ fn encode_single_field(
 		quote_spanned! {
 			field.span() => {
 				<#encoded_as as
-					_parity_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field_name)
+					_tetsy_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field_name)
 			}
 		}
 	} else {
@@ -71,16 +71,16 @@ fn encode_single_field(
 	};
 
 	quote_spanned! { field.span() =>
-			fn encode_to<EncOut: _parity_scale_codec::Output>(&self, dest: &mut EncOut) {
-				_parity_scale_codec::Encode::encode_to(&#final_field_variable, dest)
+			fn encode_to<EncOut: _tetsy_scale_codec::Output>(&self, dest: &mut EncOut) {
+				_tetsy_scale_codec::Encode::encode_to(&#final_field_variable, dest)
 			}
 
-			fn encode(&self) -> _parity_scale_codec::alloc::vec::Vec<u8> {
-				_parity_scale_codec::Encode::encode(&#final_field_variable)
+			fn encode(&self) -> _tetsy_scale_codec::alloc::vec::Vec<u8> {
+				_tetsy_scale_codec::Encode::encode(&#final_field_variable)
 			}
 
 			fn using_encoded<R, F: FnOnce(&[u8]) -> R>(&self, f: F) -> R {
-				_parity_scale_codec::Encode::using_encoded(&#final_field_variable, f)
+				_tetsy_scale_codec::Encode::using_encoded(&#final_field_variable, f)
 			}
 	}
 }
@@ -112,8 +112,8 @@ fn encode_fields<F>(
 			quote_spanned! {
 				f.span() => {
 					#dest.push(
-						&<<#field_type as _parity_scale_codec::HasCompact>::Type as
-							_parity_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field)
+						&<<#field_type as _tetsy_scale_codec::HasCompact>::Type as
+							_tetsy_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field)
 					);
 				}
 			}
@@ -123,7 +123,7 @@ fn encode_fields<F>(
 				f.span() => {
 					#dest.push(
 						&<#encoded_as as
-							_parity_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field)
+							_tetsy_scale_codec::EncodeAsRef<'_, #field_type>>::RefType::from(#field)
 					);
 				}
 			}
@@ -280,7 +280,7 @@ fn impl_encode(data: &Data, type_name: &Ident) -> TokenStream {
 	};
 
 	quote! {
-		fn encode_to<EncOut: _parity_scale_codec::Output>(&#self_, #dest: &mut EncOut) {
+		fn encode_to<EncOut: _tetsy_scale_codec::Output>(&#self_, #dest: &mut EncOut) {
 			#encoding
 		}
 	}

@@ -90,7 +90,7 @@ fn create_decode_expr(field: &Field, name: &String, input: &TokenStream) -> Toke
 		quote_spanned! { field.span() =>
 			{
 				let res = <
-					<#field_type as _parity_scale_codec::HasCompact>::Type as _parity_scale_codec::Decode
+					<#field_type as _tetsy_scale_codec::HasCompact>::Type as _tetsy_scale_codec::Decode
 				>::decode(#input);
 				match res {
 					Err(_) => return Err(#err_msg.into()),
@@ -101,7 +101,7 @@ fn create_decode_expr(field: &Field, name: &String, input: &TokenStream) -> Toke
 	} else if let Some(encoded_as) = encoded_as {
 		quote_spanned! { field.span() =>
 			{
-				let res = <#encoded_as as _parity_scale_codec::Decode>::decode(#input);
+				let res = <#encoded_as as _tetsy_scale_codec::Decode>::decode(#input);
 				match res {
 					Err(_) => return Err(#err_msg.into()),
 					Ok(a) => a.into(),
@@ -113,7 +113,7 @@ fn create_decode_expr(field: &Field, name: &String, input: &TokenStream) -> Toke
 	} else {
 		quote_spanned! { field.span() =>
 			{
-				let res = _parity_scale_codec::Decode::decode(#input);
+				let res = _tetsy_scale_codec::Decode::decode(#input);
 				match res {
 					Err(_) => return Err(#err_msg.into()),
 					Ok(a) => a,

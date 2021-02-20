@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! # Parity SCALE Codec
+//! # Tetsy SCALE Codec
 //!
 //! Rust implementation of the SCALE (Simple Concatenated Aggregate Little-Endian) data format
-//! for types used in the Parity Substrate framework.
+//! for types used in the Tetsy Tetcore framework.
 //!
 //! SCALE is a light-weight format which allows encoding (and decoding) which makes it highly
 //! suitable for resource-constrained execution environments like blockchain runtimes and low-power,
@@ -27,7 +27,7 @@
 //!
 //! To get a better understanding of how the encoding is done for different types,
 //! take a look at the
-//! [low-level data formats overview page at the Substrate docs site](https://substrate.dev/docs/en/overview/low-level-data-format).
+//! [low-level data formats overview page at the Tetcore docs site](https://dev.tetcoin.org/docs/en/overview/low-level-data-format).
 //!
 //! ## Implementation
 //!
@@ -85,9 +85,9 @@
 //! ```
 //! # // Import macros if derive feature is not used.
 //! # #[cfg(not(feature="derive"))]
-//! # use parity_scale_codec_derive::{Encode, Decode};
+//! # use tetsy_scale_codec_derive::{Encode, Decode};
 //!
-//! use parity_scale_codec::{Encode, Decode};
+//! use tetsy_scale_codec::{Encode, Decode};
 //!
 //! #[derive(Debug, PartialEq, Encode, Decode)]
 //! enum EnumType {
@@ -136,9 +136,9 @@
 //! ```
 //! # // Import macros if derive feature is not used.
 //! # #[cfg(not(feature="derive"))]
-//! # use parity_scale_codec_derive::{Encode, Decode};
+//! # use tetsy_scale_codec_derive::{Encode, Decode};
 //!
-//! use parity_scale_codec::{Encode, Decode, Compact, HasCompact};
+//! use tetsy_scale_codec::{Encode, Decode, Compact, HasCompact};
 //!
 //! #[derive(Debug, PartialEq, Encode, Decode)]
 //! struct Test1CompactHasCompact<T: HasCompact> {
@@ -165,10 +165,10 @@
 //! ```rust
 //! # // Import macros if derive feature is not used.
 //! # #[cfg(not(feature="derive"))]
-//! # use parity_scale_codec_derive::{Encode, Decode};
+//! # use tetsy_scale_codec_derive::{Encode, Decode};
 //!
 //! use serde_derive::{Serialize, Deserialize};
-//! use parity_scale_codec::{Encode, Decode, Compact, HasCompact, CompactAs};
+//! use tetsy_scale_codec::{Encode, Decode, Compact, HasCompact, CompactAs};
 //!
 //! #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug))]
 //! #[derive(PartialEq, Eq, Clone)]
@@ -218,18 +218,18 @@
 #[doc(hidden)]
 pub extern crate alloc;
 
-#[cfg(feature = "parity-scale-codec-derive")]
+#[cfg(feature = "tetsy-scale-codec-derive")]
 #[allow(unused_imports)]
 #[macro_use]
-extern crate parity_scale_codec_derive;
+extern crate tetsy_scale_codec_derive;
 
 #[cfg(all(feature = "std", test))]
 #[macro_use]
 extern crate serde_derive;
 
-#[cfg(feature = "parity-scale-codec-derive")]
+#[cfg(feature = "tetsy-scale-codec-derive")]
 #[doc(hidden)]
-pub use parity_scale_codec_derive::*;
+pub use tetsy_scale_codec_derive::*;
 
 #[cfg(feature = "std")]
 #[doc(hidden)]

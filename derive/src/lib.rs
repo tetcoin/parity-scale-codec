@@ -36,16 +36,16 @@ mod encode;
 mod utils;
 mod trait_bounds;
 
-/// Include the `parity-scale-codec` crate under a known name (`_parity_scale_codec`).
-fn include_parity_scale_codec_crate() -> proc_macro2::TokenStream {
+/// Include the `tetsy-scale-codec` crate under a known name (`_tetsy_scale_codec`).
+fn include_tetsy_scale_codec_crate() -> proc_macro2::TokenStream {
 	// This "hack" is required for the tests.
-	if env::var("CARGO_PKG_NAME").unwrap() == "parity-scale-codec" {
-		quote!( extern crate parity_scale_codec as _parity_scale_codec; )
+	if env::var("CARGO_PKG_NAME").unwrap() == "tetsy-scale-codec" {
+		quote!( extern crate tetsy_scale_codec as _tetsy_scale_codec; )
 	} else {
-		match crate_name("parity-scale-codec") {
-			Ok(parity_codec_crate) => {
-				let ident = Ident::new(&parity_codec_crate, Span::call_site());
-				quote!( extern crate #ident as _parity_scale_codec; )
+		match crate_name("tetsy-scale-codec") {
+			Ok(tetsy_codec_crate) => {
+				let ident = Ident::new(&tetsy_codec_crate, Span::call_site());
+				quote!( extern crate #ident as _tetsy_scale_codec; )
 			},
 			Err(e) => Error::new(Span::call_site(), &e).to_compile_error(),
 		}
@@ -54,7 +54,7 @@ fn include_parity_scale_codec_crate() -> proc_macro2::TokenStream {
 
 /// Wraps the impl block in a "dummy const"
 fn wrap_with_dummy_const(input: &DeriveInput, prefix: &str, impl_block: proc_macro2::TokenStream) -> TokenStream {
-	let parity_codec_crate = include_parity_scale_codec_crate();
+	let tetsy_codec_crate = include_tetsy_scale_codec_crate();
 	let mut new_name = prefix.to_string();
 	new_name.push_str(input.ident.to_string().trim_start_matches("r#"));
 	let dummy_const = Ident::new(&new_name, Span::call_site());
@@ -65,7 +65,7 @@ fn wrap_with_dummy_const(input: &DeriveInput, prefix: &str, impl_block: proc_mac
 			#[allow(unknown_lints)]
 			#[cfg_attr(feature = "cargo-clippy", allow(useless_attribute))]
 			#[allow(rust_2018_idioms)]
-			#parity_codec_crate
+			#tetsy_codec_crate
 			#impl_block
 		};
 	};
@@ -87,7 +87,7 @@ pub fn encode_derive(input: TokenStream) -> TokenStream {
 		&input.ident,
 		&mut input.generics,
 		&input.data,
-		parse_quote!(_parity_scale_codec::Encode),
+		parse_quote!(_tetsy_scale_codec::Encode),
 		None,
 	) {
 		return e.to_compile_error().into();
@@ -99,11 +99,11 @@ pub fn encode_derive(input: TokenStream) -> TokenStream {
 	let encode_impl = encode::quote(&input.data, name);
 
 	let impl_block = quote! {
-		impl #impl_generics _parity_scale_codec::Encode for #name #ty_generics #where_clause {
+		impl #impl_generics _tetsy_scale_codec::Encode for #name #ty_generics #where_clause {
 			#encode_impl
 		}
 
-		impl #impl_generics _parity_scale_codec::EncodeLike for #name #ty_generics #where_clause {}
+		impl #impl_generics _tetsy_scale_codec::EncodeLike for #name #ty_generics #where_clause {}
 	};
 
 	wrap_with_dummy_const(&input, "_IMPL_ENCODE_FOR_", impl_block)
@@ -124,7 +124,7 @@ pub fn decode_derive(input: TokenStream) -> TokenStream {
 		&input.ident,
 		&mut input.generics,
 		&input.data,
-		parse_quote!(_parity_scale_codec::Decode),
+		parse_quote!(_tetsy_scale_codec::Decode),
 		Some(parse_quote!(Default))
 	) {
 		return e.to_compile_error().into();
@@ -137,10 +137,10 @@ pub fn decode_derive(input: TokenStream) -> TokenStream {
 	let decoding = decode::quote(&input.data, name, &input_);
 
 	let impl_block = quote! {
-		impl #impl_generics _parity_scale_codec::Decode for #name #ty_generics #where_clause {
-			fn decode<DecIn: _parity_scale_codec::Input>(
+		impl #impl_generics _tetsy_scale_codec::Decode for #name #ty_generics #where_clause {
+			fn decode<DecIn: _tetsy_scale_codec::Input>(
 				#input_: &mut DecIn
-			) -> core::result::Result<Self, _parity_scale_codec::Error> {
+			) -> core::result::Result<Self, _tetsy_scale_codec::Error> {
 				#decoding
 			}
 		}
@@ -160,7 +160,7 @@ pub fn compact_as_derive(input: TokenStream) -> TokenStream {
 		&input.ident,
 		&mut input.generics,
 		&input.data,
-		parse_quote!(_parity_scale_codec::CompactAs),
+		parse_quote!(_tetsy_scale_codec::CompactAs),
 		None,
 	) {
 		return e.to_compile_error().into();
@@ -217,7 +217,7 @@ pub fn compact_as_derive(input: TokenStream) -> TokenStream {
 	};
 
 	let impl_block = quote! {
-		impl #impl_generics _parity_scale_codec::CompactAs for #name #ty_generics #where_clause {
+		impl #impl_generics _tetsy_scale_codec::CompactAs for #name #ty_generics #where_clause {
 			type As = #inner_ty;
 			fn encode_as(&self) -> &#inner_ty {
 				#inner_field
@@ -227,8 +227,8 @@ pub fn compact_as_derive(input: TokenStream) -> TokenStream {
 			}
 		}
 
-		impl #impl_generics From<_parity_scale_codec::Compact<#name #ty_generics>> for #name #ty_generics #where_clause {
-			fn from(x: _parity_scale_codec::Compact<#name #ty_generics>) -> #name #ty_generics {
+		impl #impl_generics From<_tetsy_scale_codec::Compact<#name #ty_generics>> for #name #ty_generics #where_clause {
+			fn from(x: _tetsy_scale_codec::Compact<#name #ty_generics>) -> #name #ty_generics {
 				x.0
 			}
 		}

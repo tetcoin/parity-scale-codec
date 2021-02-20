@@ -21,7 +21,7 @@ use crate::Encode;
 /// # Example
 ///
 /// ```
-///# use parity_scale_codec::{EncodeLike, Encode};
+///# use tetsy_scale_codec::{EncodeLike, Encode};
 /// fn encode_like<T: EncodeLike<R>, R: Encode>(data: &R) {
 ///     data.encode();
 /// }

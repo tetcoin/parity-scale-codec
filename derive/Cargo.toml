@@ -1,6 +1,6 @@
 [package]
-name = "parity-scale-codec-derive"
-description = "Serialization and deserialization derive macro for Parity SCALE Codec"
+name = "tetsy-scale-codec-derive"
+description = "Serialization and deserialization derive macro for Tetsy SCALE Codec"
 version = "1.0.2"
 authors = ["Parity Technologies <admin@parity.io>"]
 license = "Apache-2.0"

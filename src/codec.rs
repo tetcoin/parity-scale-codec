@@ -216,7 +216,7 @@ impl<W: std::io::Write> Output for W {
 	}
 }
 
-/// This enum must not be exported and must only be instantiable by parity-scale-codec.
+/// This enum must not be exported and must only be instantiable by tetsy-scale-codec.
 /// Because implementation of Encode and Decode for u8 is done in this crate
 /// and there is not other usage.
 pub enum IsU8 {
