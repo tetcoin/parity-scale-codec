@@ -1,7 +1,7 @@
 [package]
 name = "tetsy-scale-codec"
 description = "SCALE - Simple Concatenating Aggregated Little Endians"
-version = "2.0.0-update1"
+version = "2.0.0-update2"
 authors = ["Parity Technologies <admin@parity.io>"]
 license = "Apache-2.0"
 repository = "https://github.com/tetcoin/tetsy-scale-codec"
@@ -12,7 +12,8 @@ edition = "2018"
 arrayvec = { version = "0.5.1", default-features = false, features = ["array-sizes-33-128", "array-sizes-129-255"] }
 serde = { version = "1.0.102", optional = true }
 tetsy-scale-codec-derive = { path = "derive", version = "2.0.0", default-features = false, optional = true }
-bitvec = { version = "0.21.0", default-features = false, features = ["alloc"], optional = true }
+bitvec = { version = "0.20.1", default-features = false, features = ["alloc"], optional = true }
+funty = "=1.1.0" # Temporary fix for https://github.com/bitvecto-rs/bitvec/issues/105
 byte-slice-cast = { version = "1.0.0", default-features = false }
 generic-array = { version = "0.14.4", optional = true }
 arbitrary = { version = "0.4.1", features = ["derive"], optional = true }

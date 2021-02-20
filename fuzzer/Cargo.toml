@@ -9,4 +9,5 @@ publish = false
 tetsy-scale-codec = { path = "../", features = [ "derive", "bit-vec", "fuzz" ] }
 honggfuzz = "0.5.47"
 arbitrary = { version = "0.4.1", features = ["derive"] }
-bitvec = { version = "0.21.0", features = ["alloc"] }
+bitvec = { version = "0.20.1", features = ["alloc"] }
+funty = "=1.1.0" # Temporary fix for https://github.com/bitvecto-rs/bitvec/issues/105
