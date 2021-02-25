@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate parity_codec;
+extern crate tetsy_codec;
 
 #[macro_use]
-extern crate parity_codec_derive;
+extern crate tetsy_codec_derive;
 
-use parity_codec::{Encode, Decode, HasCompact};
+use tetsy_codec::{Encode, Decode, HasCompact};
 
 #[derive(Debug, PartialEq, Encode, Decode)]
 struct Unit;

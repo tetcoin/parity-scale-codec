@@ -38,7 +38,7 @@ pub fn encode_derive(input: TokenStream) -> TokenStream {
 	let input: DeriveInput = syn::parse(input).expect(ENCODE_ERR);
 	let name = &input.ident;
 
-	let generics = add_trait_bounds(input.generics, parse_quote!(_parity_codec::Encode));
+	let generics = add_trait_bounds(input.generics, parse_quote!(_tetsy_codec::Encode));
 	let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
 	let self_ = quote!(self);
@@ -46,8 +46,8 @@ pub fn encode_derive(input: TokenStream) -> TokenStream {
 	let encoding = encode::quote(&input.data, name, &self_, &dest_);
 
 	let impl_block = quote! {
-		impl #impl_generics _parity_codec::Encode for #name #ty_generics #where_clause {
-			fn encode_to<EncOut: _parity_codec::Output>(&#self_, #dest_: &mut EncOut) {
+		impl #impl_generics _tetsy_codec::Encode for #name #ty_generics #where_clause {
+			fn encode_to<EncOut: _tetsy_codec::Output>(&#self_, #dest_: &mut EncOut) {
 				#encoding
 			}
 		}
@@ -63,7 +63,7 @@ pub fn encode_derive(input: TokenStream) -> TokenStream {
 			#[allow(unknown_lints)]
 			#[cfg_attr(feature = "cargo-clippy", allow(useless_attribute))]
 			#[allow(rust_2018_idioms)]
-			extern crate parity_codec as _parity_codec;
+			extern crate tetsy_codec as _tetsy_codec;
 			#impl_block
 		};
 	};
@@ -76,15 +76,15 @@ pub fn decode_derive(input: TokenStream) -> TokenStream {
 	let input: DeriveInput = syn::parse(input).expect(ENCODE_ERR);
 	let name = &input.ident;
 
-	let generics = add_trait_bounds(input.generics, parse_quote!(_parity_codec::Decode));
+	let generics = add_trait_bounds(input.generics, parse_quote!(_tetsy_codec::Decode));
 	let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
 	let input_ = quote!(input);
 	let decoding = decode::quote(&input.data, name, &input_);
 
 	let impl_block = quote! {
-		impl #impl_generics _parity_codec::Decode for #name #ty_generics #where_clause {
-			fn decode<DecIn: _parity_codec::Input>(#input_: &mut DecIn) -> Option<Self> {
+		impl #impl_generics _tetsy_codec::Decode for #name #ty_generics #where_clause {
+			fn decode<DecIn: _tetsy_codec::Input>(#input_: &mut DecIn) -> Option<Self> {
 				#decoding
 			}
 		}
@@ -100,7 +100,7 @@ pub fn decode_derive(input: TokenStream) -> TokenStream {
 			#[allow(unknown_lints)]
 			#[cfg_attr(feature = "cargo-clippy", allow(useless_attribute))]
 			#[allow(rust_2018_idioms)]
-			extern crate parity_codec as _parity_codec;
+			extern crate tetsy_codec as _tetsy_codec;
 			#impl_block
 		};
 	};

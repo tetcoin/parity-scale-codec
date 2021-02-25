@@ -1,37 +1,37 @@
 [package]
-name = "parity-codec"
-description = "Lightweight, efficient, binary serialization and deserialization codec"
+name = "tetsy-codec"
+description = "Tetsy Lightweight, efficient, binary serialization and deserialization codec"
 version = "3.0.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 license = "Apache-2.0"
-repository = "https://github.com/paritytech/parity-codec"
+repository = "https://github.com/tetcoin/tetsy-scale-codec"
 categories = ["encoding"]
 
 [dependencies]
 arrayvec = { version = "0.4", default-features = false }
 serde = { version = "1.0", optional = true }
-parity-codec-derive = { path = "derive", version = "3.0", default-features = false, optional = true }
+tetsy-codec-derive = { path = "derive", version = "3.0", default-features = false, optional = true }
 
 [dev-dependencies]
 serde_derive = { version = "1.0" }
-parity-codec-derive = { path = "derive", version = "3.0", default-features = false }
+tetsy-codec-derive = { path = "derive", version = "3.0", default-features = false }
 
 [features]
 default = ["std"]
-derive = ["parity-codec-derive"]
+derive = ["tetsy-codec-derive"]
 std = ["serde"]
 
 # WARNING: DO _NOT_ USE THIS FEATURE IF YOU ARE WORKING ON CONSENSUS CODE!*
 #
 # Provides implementations for more data structures than just Vec and Box.
-# Concretely it will provide parity-codec implementations for many types
+# Concretely it will provide tetsy-codec implementations for many types
 # that can be found in std and/or alloc (nightly).
 #
 # This feature was mainly introduced after it became clear that pDSL requires
 # it for the sake of usability of its users.
 #
 # * For rational about this please visit:
-# https://github.com/paritytech/parity-codec/pull/27#issuecomment-453031914
+# https://github.com/tetcoin/tetsy-scale-codec/pull/27#issuecomment-453031914
 full = []
 
 [workspace]
