@@ -1,10 +1,15 @@
 [package]
-name = "parity-scale-codec-derive"
-description = "Serialization and deserialization derive macro for Parity SCALE Codec"
+name = "tetsy-scale-codec-derive"
 version = "1.2.0"
-authors = ["Parity Technologies <admin@parity.io>"]
+authors = ["Parity Technologies <admin@parity.io>", "Tetcoin Developers <support@tetcoin.org>"]
+description = "Serialization and deserialization derive macro for Tetsy SCALE Codec"
 license = "Apache-2.0"
 edition = "2018"
+keywords = [ "tetcoin", "tetcore", "vapory" ]
+categories = [ "cryptography::cryptocurrencies" ]
+homepage = "https://core.tetcoin.org"
+repository = "https://github.com/tetcoin/tetsy-scale-codec"
+documentation = "https://docs.rs/tetsy-scale-codec-derive"
 
 [lib]
 proc-macro = true
@@ -16,4 +21,4 @@ proc-macro2 = "1.0.6"
 proc-macro-crate = "0.1.4"
 
 [dev-dependencies]
-parity-scale-codec = { path = "..", version = "1.1.0" }
+tetsy-scale-codec = { path = "..", version = "1.1.0" }

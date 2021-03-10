@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use bitvec::{vec::BitVec, order::Msb0};
 use honggfuzz::fuzz;
-use parity_scale_codec::{Encode, Decode, Compact};
+use tetsy_scale_codec::{Encode, Decode, Compact};
 
 #[derive(Encode, Decode)]
 pub struct MockStruct{

@@ -1,8 +1,8 @@
 #[cfg(not(feature="derive"))]
-use parity_scale_codec_derive::{Encode, Decode, CompactAs};
+use tetsy_scale_codec_derive::{Encode, Decode, CompactAs};
 #[cfg(feature="derive")]
-use parity_scale_codec::CompactAs;
-use parity_scale_codec::{Compact, Decode, Encode, HasCompact};
+use tetsy_scale_codec::CompactAs;
+use tetsy_scale_codec::{Compact, Decode, Encode, HasCompact};
 use serde_derive::{Serialize, Deserialize};
 
 #[derive(Debug, PartialEq, Encode, Decode)]

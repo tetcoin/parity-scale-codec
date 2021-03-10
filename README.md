@@ -69,7 +69,7 @@ Following are some examples to demonstrate usage of the codec.
 
 ```rust
 
-use parity_scale_codec::{Encode, Decode};
+use tetsy_scale_codec::{Encode, Decode};
 
 #[derive(Debug, PartialEq, Encode, Decode)]
 enum EnumType {
@@ -116,7 +116,7 @@ assert_eq!(EnumType::decode(&mut dz).ok(), None);
 
 ```rust
 
-use parity_scale_codec::{Encode, Decode, Compact, HasCompact};
+use tetsy_scale_codec::{Encode, Decode, Compact, HasCompact};
 
 #[derive(Debug, PartialEq, Encode, Decode)]
 struct Test1CompactHasCompact<T: HasCompact> {
@@ -142,7 +142,7 @@ assert_eq!(<Test1CompactHasCompact<u64>>::decode(&mut &encoded[..]).unwrap().bar
 ```rust
 
 use serde_derive::{Serialize, Deserialize};
-use parity_scale_codec::{Encode, Decode, Compact, HasCompact, CompactAs};
+use tetsy_scale_codec::{Encode, Decode, Compact, HasCompact, CompactAs};
 
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug))]
 #[derive(PartialEq, Eq, Clone)]

@@ -17,8 +17,8 @@ use std::{time::Duration, any::type_name, convert::{TryFrom, TryInto}};
 #[cfg(feature = "bit-vec")]
 use bitvec::vec::BitVec;
 use criterion::{Criterion, black_box, Bencher, criterion_group, criterion_main};
-use parity_scale_codec::*;
-use parity_scale_codec_derive::{Encode, Decode};
+use tetsy_scale_codec::*;
+use tetsy_scale_codec_derive::{Encode, Decode};
 
 fn array_vec_write_u128(b: &mut Bencher) {
 	b.iter(|| {
